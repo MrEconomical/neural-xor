@@ -4,10 +4,10 @@ import random
 # expected XOR inputs and outputs
 
 xor_values = [
-    ([0, 0], [0]),
-    ([0, 1], [1]),
-    ([1, 0], [1]),
-    ([1, 1], [0]),
+    ([0, 0], 0),
+    ([0, 1], 1),
+    ([1, 0], 1),
+    ([1, 1], 0),
 ]
 
 # hyperparameters
@@ -46,14 +46,23 @@ def forward(input: list[float]) -> (list[float], float):
         result += weights[-1] # add bias
         hidden_result.append(sigmoid(result))
 
-    output_result = 0
+    output = 0
     for w in range(len(hidden_result)):
-        output_result += model[1][w] * hidden_result[w]
-    output_result += model[1][-1] # add bias
+        output += model[1][w] * hidden_result[w]
+    output += model[1][-1] # add bias
     
-    return hidden_result, sigmoid(output_result)
+    return hidden_result, sigmoid(output)
+
+# update weights in back propagation
+
+def back_prop(input: list[float], hidden_result: list[float], output: float, expected: float):
+    # calculate output error
+
+    output_error = 0.5 * (expected - output) ** 2
+    print("output error:", output, expected, output_error)
 
 for case in xor_values:
     print("testing", case)
-    hidden_result, result = forward(case[0])
-    print(hidden_result, result)
+    hidden_result, output = forward(case[0])
+    print(hidden_result, output)
+    back_prop(case[0], hidden_result, output, case[1])
