@@ -37,23 +37,23 @@ def sigmoid(value: int):
 
 # calculate forward propagation result
 
-def forward(input: list[float]) -> float:
-    input.append(1) # add bias
+def forward(input: list[float]) -> (list[float], float):
     hidden_result = []
     for weights in model[0]:
         result = 0
-        for w in range(len(weights)):
+        for w in range(len(input)):
             result += weights[w] * input[w]
+        result += weights[-1] # add bias
         hidden_result.append(sigmoid(result))
 
-    hidden_result.append(1) # add bias
     output_result = 0
-    for w in range(len(model[1])):
+    for w in range(len(hidden_result)):
         output_result += model[1][w] * hidden_result[w]
+    output_result += model[1][-1] # add bias
     
-    return sigmoid(output_result)
+    return hidden_result, sigmoid(output_result)
 
 for case in xor_values:
     print("testing", case)
-    result = forward(case[0])
-    print(result)
+    hidden_result, result = forward(case[0])
+    print(hidden_result, result)
