@@ -14,7 +14,7 @@ xor_values = [
 
 input_size = 2
 hidden_size = 2
-learning_rate = 0.01
+learning_rate = 0.5
 
 # initialize model with random weights
 
@@ -56,13 +56,39 @@ def forward(input: list[float]) -> (list[float], float):
 # update weights in back propagation
 
 def back_prop(input: list[float], hidden_result: list[float], output: float, expected: float):
-    # calculate output error
+    # calculate output error and delta for output neuron
 
     output_error = 0.5 * (expected - output) ** 2
     print("output error:", output, expected, output_error)
+    output_error_derivative = output - expected # derivative of error function
+    output_sigmoid_derivative = output * (1 - output) # derivative of sigmoid
+    output_delta = output_error_derivative * output_sigmoid_derivative # derivative of error with respect to pre-sigmoid output
+    print("output delta:", output_delta)
 
-for case in xor_values:
-    print("testing", case)
-    hidden_result, output = forward(case[0])
-    print(hidden_result, output)
-    back_prop(case[0], hidden_result, output, case[1])
+    # calculate updated output neuron weights
+    output_weights = []
+    for w in range(len(hidden_result)):
+        weight_derivative = output_delta * hidden_result[w] # derivative of error with respect to weight
+        new_weight = model[1][w] - learning_rate * weight_derivative # update weight to reduce error
+        output_weights.append(new_weight)
+    new_bias_weight = model[1][-1] - learning_rate * output_delta # bias is a fixed input of 1
+    output_weights.append(new_bias_weight)
+
+    print("current_output_weights:", model[1])
+    print("adjusted output weights:", output_weights)
+
+    # test the new weights for sanity
+    print()
+    print("old result:", output)
+    new_result = sigmoid(hidden_result[0] * output_weights[0] + hidden_result[1] * output_weights[1] + output_weights[2])
+    print("new result:", new_result)
+
+    model[1] = output_weights
+
+for x in range(1):
+    for case in [xor_values[3]]:
+        print("testing", case)
+        hidden_result, output = forward(case[0])
+        print(hidden_result, output)
+        print()
+        back_prop(case[0], hidden_result, output, case[1])
