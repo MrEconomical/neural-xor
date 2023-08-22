@@ -1,21 +1,21 @@
 import math
 import random
 
-# expected XOR inputs and outputs
+# expected inputs and outputs
 
-xor_values = [
+test_cases = [
     ([0, 0], 0),
     ([0, 1], 1),
     ([1, 0], 1),
-    ([1, 1], 0),
+    ([1, 1], 1),
 ]
 
 # hyperparameters
 
 input_size = 2
-hidden_size = 3
-learning_rate = 0.01
-epochs = 1
+hidden_size = 2
+learning_rate = 0.05
+epochs = 100000
 
 # initialize model with random weights
 
@@ -102,16 +102,18 @@ def back_prop(input: list[float], hidden_result: list[float], output: float, exp
 
 # train over epochs
 
+log_interval = epochs // 20
 for e in range(epochs):
     total_error = 0
-    for case in xor_values:
+    for case in test_cases:
         hidden_result, output = forward(case[0])
         output_error = back_prop(case[0], hidden_result, output, case[1])
         total_error += output_error
-    print("epoch", e, "mean error", total_error / 4)
+    if e % log_interval == 0:
+        print("epoch", e, "mean error", total_error / 4)
 
 # evaluate model
 
-for case in xor_values:
+for case in test_cases:
     h, output = forward(case[0])
     print(case[0], "expected output:", case[1], "model output:", output)
