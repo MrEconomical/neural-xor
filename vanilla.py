@@ -15,7 +15,7 @@ test_cases = [
 input_size = 2
 hidden_size = 2
 learning_rate = 0.2
-epochs = 10000
+epochs = 100000
 
 # initialize model with random weights
 
@@ -77,7 +77,10 @@ def back_prop(input: list[float], hidden_result: list[float], output: float, exp
 
     # back propagate error to hidden layer
 
-    hidden_weights = [[]] * len(model[0])
+    hidden_weights = []
+    for n in range(len(model[0])):
+        hidden_weights.append([])
+    
     for n in range(len(model[0])):
         hidden_error_derivative = output_delta * model[1][n] # derivative of error with respect to hidden neuron output
         hidden_sigmoid_derivative = hidden_result[n] * (1 - hidden_result[n]) # derivative of sigmoid
@@ -114,6 +117,7 @@ for e in range(epochs):
 
 # evaluate model
 
+print(model)
 for case in test_cases:
     h, output = forward(case[0])
     print(case[0], "expected output:", case[1], "model output:", output)
