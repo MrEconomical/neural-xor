@@ -13,14 +13,14 @@ test_cases = [
 # hyperparameters
 
 input_size = 2
-hidden_size = 2
-learning_rate = 0.05
-epochs = 100000
+hidden_size = 4
+learning_rate = 0.5
+epochs = 10000
 
 # initialize model with random weights
 
 def get_random_weight() -> float:
-    return (random.random() - 0.5) * 2
+    return (random.random() - 0.5) * 4
 
 model = [[], []]
 for n in range(hidden_size):
