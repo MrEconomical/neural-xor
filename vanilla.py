@@ -30,7 +30,7 @@ for n in range(hidden_size):
 for n in range(hidden_size + 1):
     model[1].append(get_random_weight())
 
-# activation functions
+# activation function
 
 def sigmoid(value: int):
     return 1 / (1 + math.exp(-value))
@@ -45,13 +45,15 @@ def forward(input: list[float]) -> float:
         for w in range(len(weights)):
             result += weights[w] * input[w]
         hidden_result.append(sigmoid(result))
-    
-    print(hidden_result)
 
     hidden_result.append(1) # add bias
     output_result = 0
     for w in range(len(model[1])):
         output_result += model[1][w] * hidden_result[w]
     
-    print(output_result)
     return sigmoid(output_result)
+
+for case in xor_values:
+    print("testing", case)
+    result = forward(case[0])
+    print(result)
