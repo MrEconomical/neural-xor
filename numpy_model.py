@@ -23,8 +23,6 @@ model = [
     np.random.randn(hidden_size + 1) / np.sqrt(hidden_size + 1),
 ]
 
-print(model)
-
 # activation function
 
 def sigmoid(value) -> float:
@@ -77,5 +75,21 @@ def back_prop(input, hidden_output, output, expected):
 
     return output_error
 
-hidden_output, output = forward(test_cases[0][0])
-back_prop(test_cases[2][0], hidden_output, output, test_cases[2][1])
+# train over epochs
+
+log_interval = epochs // 20
+for e in range(epochs):
+    total_error = 0
+    for case in test_cases:
+        hidden_output, output = forward(case[0])
+        output_error = back_prop(case[0], hidden_output, output, case[1])
+        total_error += output_error
+    if e % log_interval == 0:
+        print("epoch", e, "mean error", total_error / 4)
+
+# evaluate model
+
+print(model)
+for case in test_cases:
+    h, output = forward(case[0])
+    print(case[0], "expected output:", case[1], "model output:", output)
