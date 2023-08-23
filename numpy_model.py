@@ -48,7 +48,9 @@ def back_prop(input, hidden_output, output, expected):
 
     # calculate updated output neuron weights
 
-    output_weight_derivatives = np.append(output_delta * hidden_output, output_delta) # derivative of error with respect to weights
+    output_weight_derivatives = np.empty(hidden_output.size + 1)
+    output_weight_derivatives[:-1] = output_delta * hidden_output # derivative of error with respect to weights
+    output_weight_derivatives[-1] = output_delta # bias is a fixed input of 1
     new_output_weights = model[1] - learning_rate * output_weight_derivatives # update output weights to reduce error
 
     # back propagate error to hidden layer
