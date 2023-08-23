@@ -32,11 +32,50 @@ def sigmoid(value) -> float:
 
 # calculate forward propagation result
 
-def forward(input: list[float]):
+def forward(input):
     hidden_result = np.dot(model[0][:, :-1], input) + model[0][:, -1:].flat # multiply hidden weights by input and add bias
     hidden_output = sigmoid(hidden_result) # apply activation function to result
     output_result = np.dot(model[1][:-1], hidden_output) + model[1][-1] # multiply output weights by hidden output and add bias
     return hidden_output, sigmoid(output_result)
 
+# update weights in back propagation
+
+def back_prop(input, hidden_output, output, expected):
+    # calculate output error and delta for output layer
+
+    output_error = 0.5 * (expected - output) ** 2
+    output_error_derivative = output - expected # derivative of error function
+    output_sigmoid_derivative = output * (1 - output) # derivative of sigmoid
+    output_delta = output_error_derivative * output_sigmoid_derivative # derivative of error with respect to pre-sigmoid output
+
+    # calculate updated output neuron weights
+
+    output_weight_derivatives = np.concatenate((output_delta * hidden_output, [output_delta])) # derivative of error with respect to weights
+    new_output_weights = model[1] - learning_rate * output_weight_derivatives # update output weights to reduce error
+
+    # back propagate error to hidden layer
+
+    hidden_error_derivatives = output_delta * model[1][:-1] # derivative of error with respect to hidden neuron output
+    hidden_sigmoid_derivatives = hidden_output * (1 - hidden_output) # derivative of hidden sigmoid output
+    hidden_deltas = hidden_error_derivatives * hidden_sigmoid_derivatives # derivative of error with respect to pre-sigmoid outputs
+
+    hidden_weight_derivatives = np.concatenate(
+        (
+            np.multiply.outer(hidden_deltas, input),
+            np.reshape(hidden_deltas, (hidden_deltas.size, 1))
+        ),
+        axis=1,
+    )
+    new_hidden_weights = model[0] - learning_rate * hidden_weight_derivatives # update hidden weights to reduce error
+
+    # set model weights
+
+    model[0] = new_hidden_weights
+    model[1] = new_output_weights
+
+    # return output error
+
+    return output_error
+
 hidden_output, output = forward(test_cases[0][0])
-print(hidden_output, output)
+back_prop(test_cases[2][0], hidden_output, output, test_cases[2][1])
