@@ -47,9 +47,9 @@ def back_prop(input, hidden_output, output, expected):
     output_delta = output_error_derivative * output_sigmoid_derivative # derivative of error with respect to pre-sigmoid output
 
     # calculate updated output neuron weights
-
-    output_weight_derivatives = np.empty(hidden_output.size + 1)
-    output_weight_derivatives[:-1] = output_delta * hidden_output # derivative of error with respect to weights
+    
+    output_weight_derivatives = np.empty(hidden_size + 1)
+    output_weight_derivatives[:-1] = output_delta * hidden_output # derivative of error with respect to output weights
     output_weight_derivatives[-1] = output_delta # bias is a fixed input of 1
     new_output_weights = model[1] - learning_rate * output_weight_derivatives # update output weights to reduce error
 
@@ -59,9 +59,9 @@ def back_prop(input, hidden_output, output, expected):
     hidden_sigmoid_derivatives = hidden_output * (1 - hidden_output) # derivative of hidden sigmoid output
     hidden_deltas = hidden_error_derivatives * hidden_sigmoid_derivatives # derivative of error with respect to pre-sigmoid outputs
 
-    hidden_weight_derivatives = np.empty((hidden_deltas.size, len(input) + 1))
-    hidden_weight_derivatives[:, :-1] = np.multiply.outer(hidden_deltas, input)
-    hidden_weight_derivatives[:, -1:] = np.reshape(hidden_deltas, (hidden_deltas.size, 1))
+    hidden_weight_derivatives = np.empty((hidden_size, input_size + 1))
+    hidden_weight_derivatives[:, :-1] = np.multiply.outer(hidden_deltas, input) # derivative of error with respect to hidden weights
+    hidden_weight_derivatives[:, -1:] = np.reshape(hidden_deltas, (hidden_deltas.size, 1)) # bias is a fixed input of 1
     new_hidden_weights = model[0] - learning_rate * hidden_weight_derivatives # update hidden weights to reduce error
 
     # set model weights
