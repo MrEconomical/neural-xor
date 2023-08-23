@@ -59,13 +59,9 @@ def back_prop(input, hidden_output, output, expected):
     hidden_sigmoid_derivatives = hidden_output * (1 - hidden_output) # derivative of hidden sigmoid output
     hidden_deltas = hidden_error_derivatives * hidden_sigmoid_derivatives # derivative of error with respect to pre-sigmoid outputs
 
-    hidden_weight_derivatives = np.concatenate(
-        (
-            np.multiply.outer(hidden_deltas, input),
-            np.reshape(hidden_deltas, (hidden_deltas.size, 1))
-        ),
-        axis=1,
-    )
+    hidden_weight_derivatives = np.empty((hidden_deltas.size, len(input) + 1))
+    hidden_weight_derivatives[:, :-1] = np.multiply.outer(hidden_deltas, input)
+    hidden_weight_derivatives[:, -1:] = np.reshape(hidden_deltas, (hidden_deltas.size, 1))
     new_hidden_weights = model[0] - learning_rate * hidden_weight_derivatives # update hidden weights to reduce error
 
     # set model weights
