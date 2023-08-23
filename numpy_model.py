@@ -24,3 +24,19 @@ model = [
 ]
 
 print(model)
+
+# activation function
+
+def sigmoid(value) -> float:
+    return 1 / (1 + np.exp(-value))
+
+# calculate forward propagation result
+
+def forward(input: list[float]):
+    hidden_result = np.dot(model[0][:, :-1], input) + model[0][:, -1:].flat # multiply hidden weights by input and add bias
+    hidden_output = sigmoid(hidden_result) # apply activation function to result
+    output_result = np.dot(model[1][:-1], hidden_output) + model[1][-1] # multiply output weights by hidden output and add bias
+    return hidden_output, sigmoid(output_result)
+
+hidden_output, output = forward(test_cases[0][0])
+print(hidden_output, output)
